@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint .",
-    "test": "vitest"
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview",
+  "lint": "eslint .",
+  "test": "vitest",
+  "test:ci": "vitest --run --coverage=false"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.48.0",
