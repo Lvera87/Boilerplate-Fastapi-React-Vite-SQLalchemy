@@ -106,3 +106,15 @@ frontend/
 - Configurar CI/CD (GitHub Actions, GitLab CI, etc.).
 - Integrar herramientas de observabilidad (Prometheus, Sentry).
 - Añadir temas de UI o librería de componentes.
+
+comando para iniciar el servidor de desarrollo del backend en Windows PowerShell:
+
+cd "D:\Trabajo\Boilerplate FastApi y React\backend"
+. .\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
+comando para iniciar el servidor de desarrollo del frontend en Windows PowerShell:
+
+cd "D:\Trabajo\Boilerplate FastApi y React\frontend"
+npm run dev
+
