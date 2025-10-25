@@ -1,0 +1,13 @@
+fastapi>=0.111.0,<0.112.0
+uvicorn[standard]>=0.30.0,<0.31.0
+pydantic-settings>=2.2.1,<3.0.0
+python-dotenv>=1.0.1,<2.0.0
+httpx>=0.27.0,<0.28.0
+pytest>=8.2.0,<9.0.0
+pytest-asyncio>=0.23.0,<0.24.0
+pytest-cov>=4.1.0
+sqlalchemy>=2.0,<3.0
+alembic>=1.11,<2.0
+aiosqlite>=0.18,<0.19
+ruff>=0.5.0
+slowapi>=0.1.8,<0.2.0
