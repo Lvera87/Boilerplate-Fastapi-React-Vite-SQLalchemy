@@ -9,6 +9,7 @@ from sqlalchemy import select
 from app.db.session import get_async_session
 from app.models.user import User as UserModel
 from app.schemas.user import UserCreate, UserRead
+from app.core.security import get_password_hash
 
 router = APIRouter(tags=["users"])
 
@@ -20,7 +21,7 @@ async def create_user(user_in: UserCreate, db: AsyncSession = Depends(get_async_
         username=user_in.username,
         email=user_in.email,
         full_name=user_in.full_name,
-        hashed_password=user_in.password,  # Insecure: use hashing in production
+        hashed_password=get_password_hash(user_in.password),
     )
     db.add(user)
     try:

@@ -5,8 +5,14 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+try:
+    from slowapi import Limiter
+    from slowapi.util import get_remote_address
+except Exception:  # pragma: no cover - optional dependency in test env
+    Limiter = None
+    # Fallback stub for get_remote_address when slowapi is not installed.
+    def get_remote_address(request):
+        return None
 
 from app.api.routes import api_router
 from app.core.config import get_settings
@@ -15,7 +21,8 @@ from app.core.logging import setup_logging
 
 logger = logging.getLogger("app")
 
-limiter = Limiter(key_func=get_remote_address)
+# Create limiter later inside create_app if the dependency is available.
+limiter = None
 
 
 def create_app() -> FastAPI:
@@ -27,9 +34,15 @@ def create_app() -> FastAPI:
     # Register custom exception handlers
     register_exception_handlers(application)
 
-    # Add rate limiter state
-    application.state.limiter = limiter
-    application.add_exception_handler(429, lambda request, exc: {"detail": "Rate limit exceeded"})
+    # Add rate limiter state if slowapi is available
+    if Limiter is not None:
+        local_limiter = Limiter(key_func=get_remote_address)
+        application.state.limiter = local_limiter
+        # attach a simple 429 handler used by the limiter
+        application.add_exception_handler(429, lambda request, exc: {"detail": "Rate limit exceeded"})
+    else:
+        # Ensure the attribute exists for code that expects it, but leave as None
+        application.state.limiter = None
 
     application.add_middleware(
         CORSMiddleware,
