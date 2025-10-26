@@ -24,7 +24,7 @@ async def get_health() -> HealthResponse:
         # If the optional async DB driver isn't installed (common in minimal
         # test environments here), skip an actual DB connection attempt and
         # report the DB as available so the health endpoint remains useful.
-        import importlib
+        import importlib.util
 
         if importlib.util.find_spec("aiosqlite") is None:
             db_status = DatabaseStatus(connected=True)
