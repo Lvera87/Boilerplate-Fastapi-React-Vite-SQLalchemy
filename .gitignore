@@ -27,3 +27,5 @@ Thumbs.db
 coverage/
 build/
 dist/
+# Copilot / AI agent instructions (keep out of commits if desired)
+.github/copilot-instructions.md
