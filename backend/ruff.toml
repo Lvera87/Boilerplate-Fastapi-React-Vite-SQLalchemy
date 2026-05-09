@@ -1,9 +1,9 @@
-[tool.ruff]
 line-length = 120
+indent-width = 4
 target-version = "py311"
-exclude = [".venv", "alembic", "__pycache__", ".pytest_cache"]
+exclude = [".venv", "alembic", "__pycache__", ".pytest_cache", ".ruff_cache"]
 
-[tool.ruff.lint]
+[lint]
 select = [
     "E",    # pycodestyle errors
     "W",    # pycodestyle warnings
@@ -12,15 +12,24 @@ select = [
     "B",    # flake8-bugbear
     "C4",   # flake8-comprehensions
     "UP",   # pyupgrade
+    "S",    # bandit (security)
+    "SIM",  # simplify
+    "RUF",  # ruff-specific
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
-    "B008",  # do not perform function calls in argument defaults
+    "B008",  # do not perform function calls in argument defaults (FastAPI Depends pattern)
+    "S101",  # assert (allowed in tests)
 ]
 
-[tool.ruff.lint.isort]
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "S105", "S106"]  # asserts and hardcoded passwords in tests OK
+"alembic/**/*.py" = ["E", "F", "I"]
+
+[lint.isort]
 known-first-party = ["app"]
 
-[tool.ruff.format]
+[format]
 quote-style = "double"
-indent-width = 4
+indent-style = "space"
+line-ending = "lf"

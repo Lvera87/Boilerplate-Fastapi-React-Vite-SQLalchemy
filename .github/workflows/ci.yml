@@ -9,78 +9,88 @@ on:
 env:
   PYTHON_VERSION: '3.11'
   NODE_VERSION: '20'
+  UV_VERSION: '0.11.8'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # ---------------- Backend ----------------
   backend-lint:
     runs-on: ubuntu-latest
-    name: Backend Linting (Ruff)
+    name: Backend Lint (Ruff)
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
-      - name: Run Ruff linting
-        run: |
-          cd backend
-          ruff check .
-          ruff format --check .
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+      - name: Sync dependencies
+        working-directory: backend
+        run: uv sync --frozen || uv sync
+      - name: Ruff check
+        working-directory: backend
+        run: uv run ruff check .
+      - name: Ruff format check
+        working-directory: backend
+        run: uv run ruff format --check .
 
   backend-tests:
     runs-on: ubuntu-latest
     name: Backend Tests & Coverage
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r backend/requirements.txt
-      - name: Run backend tests
-        run: |
-          cd backend
-          pytest --maxfail=1 --disable-warnings --cov=app --cov-report=xml --cov-report=html
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+      - name: Sync dependencies
+        working-directory: backend
+        run: uv sync --frozen || uv sync
+      - name: Run tests
+        working-directory: backend
+        run: uv run pytest --maxfail=1 --disable-warnings --cov=app --cov-report=xml --cov-report=html
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./backend/coverage.xml
           flags: backend
           name: backend-coverage
+        continue-on-error: true
       - name: Upload coverage artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-coverage-report
           path: backend/htmlcov
 
+  # ---------------- Frontend ----------------
   frontend-lint:
     runs-on: ubuntu-latest
-    name: Frontend Linting (ESLint & Prettier)
+    name: Frontend Lint & Format (Biome)
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
       - name: Install dependencies
-        run: |
-          cd frontend
-          npm ci
-      - name: Run ESLint
-        run: |
-          cd frontend
-          npm run lint
-      - name: Check Prettier formatting
-        run: |
-          cd frontend
-          npx prettier --check .
+        working-directory: frontend
+        run: npm ci
+      - name: Biome check (lint + format + import-sort)
+        working-directory: frontend
+        run: npx biome ci .
 
   frontend-tests:
     runs-on: ubuntu-latest
@@ -91,60 +101,67 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
       - name: Install dependencies
-        run: |
-          cd frontend
-          npm ci
-      - name: Run frontend tests with coverage
-        run: |
-          cd frontend
-          npm run test:coverage
+        working-directory: frontend
+        run: npm ci
+      - name: Run tests with coverage
+        working-directory: frontend
+        run: npm run test:coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./frontend/coverage/coverage-final.json
           flags: frontend
           name: frontend-coverage
+        continue-on-error: true
       - name: Upload coverage artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage-report
           path: frontend/coverage
 
+  # ---------------- Docker ----------------
   build-docker:
     runs-on: ubuntu-latest
     name: Build Docker Images
+    needs: [backend-lint, frontend-lint]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Build backend image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           push: false
-          tags: fastapi-backend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: Build frontend image
-        uses: docker/build-push-action@v5
+          tags: fastapi-backend:ci
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,scope=backend,mode=max
+      - name: Build frontend image (prod target)
+        uses: docker/build-push-action@v6
         with:
           context: ./frontend
+          target: prod
           push: false
-          tags: react-frontend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: react-frontend:ci
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,scope=frontend,mode=max
 
+  # ---------------- Security ----------------
   security-scan:
     runs-on: ubuntu-latest
-    name: Security Scan
+    name: Security Scan (Trivy)
     steps:
       - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          trivy-config: trivy-config.yaml
-        continue-on-error: true
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table

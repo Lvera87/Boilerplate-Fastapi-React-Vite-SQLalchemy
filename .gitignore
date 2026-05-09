@@ -1,31 +1,51 @@
-# Python
+# ---------- Python ----------
 __pycache__/
 *.py[cod]
 *.pyc
 *.pyo
 *.pyd
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
 .venv/
+venv/
 .env
 *.db
+*.sqlite*
 .coverage
+coverage.xml
 htmlcov/
 
-# Node
-/node_modules
-frontend/node_modules
-frontend/dist
-frontend/.env
-frontend/coverage
+# ---------- UV ----------
+# Keep uv.lock committed for reproducible builds; ignore local cache only.
+.uv-cache/
 
-# General
+# ---------- Node ----------
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/coverage/
+frontend/.vite/
+
+# ---------- Build / dist ----------
+build/
+dist/
+
+# ---------- Logs ----------
+*.log
+logs/
+
+# ---------- OS / IDE ----------
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
-*.log
+*.swp
+
+# ---------- Coverage (root) ----------
 coverage/
-build/
-dist/
-# Copilot / AI agent instructions (keep out of commits if desired)
+
+# ---------- Copilot / AI agent instructions (keep out of commits if desired) ----------
 .github/copilot-instructions.md

@@ -1,575 +1,325 @@
-# Boilerplate FastAPI + React + Vite + SQLAlchemy# Boilerplate FastAPI + React
+# Boilerplate FastAPI + React + Vite + SQLAlchemy
 
- 
+Boilerplate full-stack moderno con **FastAPI** (backend) y **React + Vite** (frontend). Tooling unificado: **UV** para Python, **Ruff** para lint/format en backend, **Biome** para lint/format/import-sort en frontend.
 
-Un boilerplate moderno y completo para iniciar proyectos full-stack con **FastAPI** (backend) y **React + Vite** (frontend). Incluye toda la configuración necesaria para desarrollo ágil, testing, linting, CI/CD y deployment.Un punto de partida moderno que combina **FastAPI** en el backend y **React + Vite** en el frontend.
+[![CI](https://github.com/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy/actions/workflows/ci.yml/badge.svg)](https://github.com/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy/actions)
+[![codecov](https://codecov.io/gh/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy/graph/badge.svg)](https://codecov.io/gh/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy)
 
-Incluye configuración de pruebas, linters, gestión de entornos y scripts para acelerar el desarrollo.
+---
 
-## 🎯 Características principales
+## 🎯 Características
 
-## Características principales
+- **Backend FastAPI** estructurado en capas (`api`, `core`, `db`, `models`, `schemas`, `services`).
+- **SQLAlchemy 2.x async** + **Alembic** para migraciones.
+- **Frontend React + Vite** con HMR, **TanStack Query** y **Axios**.
+- **Tailwind CSS v3** preconfigurado.
+- **UV** como gestor de paquetes y entornos Python (10–100x más rápido que pip).
+- **Ruff** para lint y format Python (un solo binario reemplaza black/isort/flake8/pyupgrade).
+- **Biome** para lint, format e import-sort en frontend (un solo binario reemplaza ESLint + Prettier).
+- **Pytest** + pytest-asyncio + pytest-cov en backend; **Vitest** + Testing Library en frontend.
+- **Pre-commit hooks** (ruff, biome, gitleaks).
+- **Docker multi-stage** con usuario no-root y `.dockerignore` en ambos servicios.
+- **GitHub Actions** con caché de UV/npm, Trivy para escaneo de vulnerabilidades.
 
-- **Backend FastAPI** estructurado en capas (`core`, `api`, `db`, `schemas`, `models`, `tests`).
+---
 
-- **Frontend React + Vite** con Hot Module Replacement (HMR), React Query para manejo de estado remoto, y Axios para HTTP.- Backend FastAPI estructurado en capas (`core`, `api`, `schemas`, `tests`).
+## 📋 Requisitos previos
 
-- **Base de datos** con SQLAlchemy (async) + Alembic para migraciones versionadas.- Configuración de CORS, logging, settings con `pydantic-settings` y ejemplo de endpoint de salud.
+- **Python 3.11+**
+- **Node.js 20+**
+- **UV** ([instalación](https://docs.astral.sh/uv/getting-started/installation/))
+  ```bash
+  # Linux / macOS
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  # Windows (PowerShell)
+  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+  ```
+- **Docker** (opcional)
+- **Make** (opcional, para usar el `Makefile`)
 
-- **Estilos** con Tailwind CSS v3 preconfigurado.- Frontend React con Vite, React Query y Axios listo para consumir el backend.
+---
 
-- **Linting & Formatting**: \- Persistencia de datos con **SQLAlchemy (asyncio)** y **Alembic** para migraciones.
-
-  - Backend: Ruff (linting + formatting)- Tooling completo: ESLint + Prettier, Vitest + Testing Library, Pytest + HTTPX.
-
-  - Frontend: ESLint + Prettier + JSDoc- Compatibilidad con Docker Compose para levantar ambos servicios.
-
-- **Testing**:
-
-  - Backend: Pytest + pytest-asyncio + pytest-cov## Requisitos previos
-
-  - Frontend: Vitest + Testing Library
-
-- **CI/CD**: GitHub Actions con linting, testing, coverage, y builds Docker.- Python 3.11+
-
-- **Pre-commit hooks** para garantizar calidad de código antes de commits.- Node.js 20+
-
-- **Rate limiting** (slowapi) y manejo de errores global en el backend.- npm 10+
-
-- **Health checks** mejorados con estado de base de datos.- Docker (opcional, para entorno contenedor)
-
-- **Logging** centralizado con rotación de archivos.
-
-- **Docker**: Multistage builds optimizados para ambos servicios.## Estado del CI
-
-- **Makefile** con targets para setup, dev, test, lint, build, etc.
-
-- ![CI](https://github.com/usuario/repo/actions/workflows/ci.yml/badge.svg)
-
-## 📋 Requisitos previos- ![Coverage](https://raw.githubusercontent.com/usuario/repo/main/backend/coverage.xml)
-
-
-
-- **Python 3.11+**## Puesta en marcha rápida
-
-- **Node.js 20+** (npm 10+)
-
-- **Docker** (opcional, para entorno contenedor)### Backend
-
-- **Git** (para pre-commit hooks)
+## 🚀 Inicio rápido
 
 ```bash
+git clone https://github.com/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy.git
+cd Boilerplate-Fastapi-React-Vite-SQLalchemy
 
-## 🚀 Inicio rápidocd backend
+# Instala backend (uv crea .venv automáticamente) y frontend
+make setup
 
-python -m venv .venv
-
-### Opción 1: Usar Makefile (Recomendado).venv\Scripts\activate  # Windows PowerShell
-
-pip install -r requirements.txt
-
-```bash# Ejecutar migraciones (crea base de datos y tablas)
-
-# Clonar el repositorio.venv\Scripts\alembic upgrade head
-
-git clone https://github.com/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy.git# Iniciar servidor de desarrollo
-
-cd Boilerplate-Fastapi-React-Vite-SQLalchemyuvicorn app.main:app --reload
-
-```
-
-# Setup del entorno de desarrollo
-
-make setupLa API estará disponible en <http://localhost:8000>.
-
-
-
-# Aplicar migraciones de base de datos### Frontend
-
+# Aplica migraciones (genera primero una si no existen: make migration name="initial")
 make migrate
 
+# Levanta ambos servidores
+make dev
+```
+
+Backend: <http://localhost:8000> · Frontend: <http://localhost:5173> · Docs: <http://localhost:8000/docs>
+
+---
+
+## 🧰 Comandos (Makefile)
+
+| Comando | Descripción |
+|---|---|
+| `make setup` | Instala deps backend (`uv sync`) y frontend (`npm install`) |
+| `make dev` | Levanta backend (uvicorn --reload) + frontend (vite) |
+| `make dev-backend` | Solo backend |
+| `make dev-frontend` | Solo frontend |
+| `make migrate` | Aplica migraciones Alembic |
+| `make migration name="..."` | Autogenera nueva migración |
+| `make test` | Ejecuta tests backend + frontend |
+| `make lint` | Ruff check + Biome check |
+| `make lint-fix` | Auto-fix backend y frontend |
+| `make format` | Format con Ruff y Biome |
+| `make coverage` | Genera reportes de cobertura |
+| `make docker-up` / `docker-down` | Docker Compose |
+| `make clean` | Limpia caches, builds, venvs, node_modules |
+| `make install-hooks` / `run-hooks` | Pre-commit hooks |
+
+Ejecuta `make help` para ver el listado completo.
+
+---
+
+## 🐍 Backend (FastAPI + UV)
+
+UV reemplaza `pip` + `venv` + `pip-tools`. La fuente de verdad es `backend/pyproject.toml` y el lockfile reproducible es `backend/uv.lock` (commitealo).
+
+### Setup manual
+
 ```bash
-
-# Iniciar ambos servidorescd frontend
-
-make devnpm install
-
-npm run dev
-
-# En otra terminal, solo el backend:```
-
-make dev-backend
-
-La aplicación se abrirá en <http://localhost:5173> y tendrá proxy hacia el backend en desarrollo.
-
-# O solo el frontend:
-
-make dev-frontend## Variables de entorno
-
-
-
-# Ejecutar testsCopiar los ejemplos proporcionados y ajustarlos según corresponda:
-
-make test
-
-- Backend: `backend/.env.example` → `backend/.env`
-
-# Ejecutar linters- Frontend: `frontend/.env.example` → `frontend/.env`
-
-make lint
-
-## Scripts útiles
-
-# Arreglar linting issues automáticamente
-
-make lint-fix### Backend (scripts)
-
-
-
-# Generar reporte de cobertura- `alembic revision --autogenerate -m "<mensaje>"` para scaffold de migración.
-
-make coverage- `alembic upgrade head` para aplicar migraciones.
-
-- `pytest` para ejecutar las pruebas.
-
-# Ver todos los comandos disponibles- `uvicorn app.main:app --reload` para entorno de desarrollo.
-
-make help
-
-```### Frontend (scripts)
-
-
-
-### Opción 2: Setup manual- `npm run dev`: servidor de desarrollo con Vite.
-
-- `npm run build`: build de producción.
-
-#### Backend- `npm run preview`: previsualizar build.
-
-- `npm run lint`: ejecutar ESLint.
-
-```bash- `npm run test`: correr Vitest.
-
 cd backend
-
-## Docker Compose
-
-# Crear virtual environment
-
-python -m venv .venv```bash
-
-docker compose up --build
-
-# Activar (Windows PowerShell)```
-
-.venv\Scripts\Activate.ps1
-
-Levanta backend (Uvicorn) y frontend (Vite) con hot reload.
-
-# Activar (Linux/macOS)
-
-source .venv/bin/activate## Estructura del proyecto
-
-
-
-# Instalar dependencias```text
-
-pip install -r requirements.txtbackend/
-
-  app/
-
-# Crear archivo de configuración    api/
-
-cp .env.example .env    core/
-
-    schemas/
-
-# Aplicar migraciones  tests/
-
-alembic upgrade headfrontend/
-
-  public/
-
-# Iniciar servidor de desarrollo  src/
-
-uvicorn app.main:app --reload    api/
-
-```    components/
-
-    config/
-
-La API estará disponible en **http://localhost:8000**.```
-
-
-
-#### Frontend## Próximos pasos sugeridos
-
-
-
-```bash- Añadir autenticación (JWT, OAuth2).
-
-cd frontend- Configurar CI/CD (GitHub Actions, GitLab CI, etc.).
-
-- Integrar herramientas de observabilidad (Prometheus, Sentry).
-
-# Instalar dependencias- Añadir temas de UI o librería de componentes.
-
-npm install
-
-comando para iniciar el servidor de desarrollo del backend en Windows PowerShell:
-
-# Crear archivo de configuración
-
-cp .env.example .envcd "D:\Trabajo\Boilerplate FastApi y React\backend"
-
-. .\.venv\Scripts\Activate.ps1
-
-# Iniciar servidor de desarrollouvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-
-npm run dev
-
-```comando para iniciar el servidor de desarrollo del frontend en Windows PowerShell:
-
-
-
-La aplicación se abrirá en **http://localhost:5173**.cd "D:\Trabajo\Boilerplate FastApi y React\frontend"
-
-npm run dev
-
-## 📁 Estructura del proyecto
-
-
-```
-.
-├── backend/
-│   ├── app/
-│   │   ├── __init__.py
-│   │   ├── main.py              # Entrypoint FastAPI
-│   │   ├── api/
-│   │   │   ├── routes.py        # Router principal
-│   │   │   └── endpoints/       # Endpoints por dominio
-│   │   │       ├── health.py
-│   │   │       └── users.py
-│   │   ├── core/
-│   │   │   ├── config.py        # Configuración (pydantic-settings)
-│   │   │   ├── exceptions.py    # Handlers de excepciones
-│   │   │   ├── logging.py       # Configuración de logging
-│   │   │   └── rate_limit.py    # Rate limiting (slowapi)
-│   │   ├── db/
-│   │   │   ├── base.py          # Base declarativa SQLAlchemy
-│   │   │   └── session.py       # Engine y Session async
-│   │   ├── models/
-│   │   │   └── user.py          # Modelos SQLAlchemy
-│   │   └── schemas/
-│   │       ├── health.py        # Schemas para health endpoint
-│   │       └── user.py          # Schemas Pydantic
-│   ├── tests/
-│   │   ├── conftest.py          # Fixtures pytest
-│   │   ├── test_health.py
-│   │   └── test_users.py
-│   ├── alembic/                 # Migraciones de BD
-│   ├── .env.example
-│   ├── requirements.txt
-│   ├── pyproject.toml           # Configuración pytest, ruff
-│   ├── ruff.toml                # Configuración Ruff
-│   └── Dockerfile               # Multistage build
-│
-├── frontend/
-│   ├── src/
-│   │   ├── main.jsx             # Entrypoint React
-│   │   ├── App.jsx
-│   │   ├── styles.css           # Tailwind + CSS personalizado
-│   │   ├── api/
-│   │   │   ├── client.js        # Cliente HTTP (Axios)
-│   │   │   └── health.js        # Endpoints health
-│   │   ├── components/
-│   │   │   ├── Layout.jsx
-│   │   │   └── HealthStatus.jsx
-│   │   └── config/
-│   │       └── env.js           # Variables de entorno
-│   ├── public/
-│   │   └── index.html
-│   ├── __tests__/
-│   │   └── App.test.jsx
-│   ├── .env.example
-│   ├── package.json
-│   ├── tailwind.config.cjs      # Configuración Tailwind
-│   ├── postcss.config.cjs       # Configuración PostCSS
-│   ├── vite.config.js           # Configuración Vite
-│   ├── vitest.config.js         # Configuración Vitest
-│   ├── .eslintrc.cjs            # Configuración ESLint
-│   ├── .prettierrc              # Configuración Prettier
-│   └── Dockerfile               # Multistage build
-│
-├── scripts/
-│   ├── dev.ps1                  # Script dev para Windows
-│   └── test.ps1                 # Script tests para Windows
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml               # GitHub Actions CI/CD
-│
-├── .pre-commit-config.yaml      # Pre-commit hooks
-├── .gitignore
-├── docker-compose.yml           # Orquestación Docker
-├── Makefile                     # Targets para desarrollo
-└── README.md
+uv sync                  # crea .venv y instala todas las deps (prod + dev)
+uv sync --no-dev         # solo prod (para Docker/runtime)
+uv add <paquete>         # añadir dep de runtime
+uv add --dev <paquete>   # añadir dep de desarrollo
+uv lock --upgrade        # actualizar lockfile
+uv run uvicorn app.main:app --reload
+uv run pytest -v
+uv run alembic upgrade head
 ```
 
-## 🔧 Configuración
+> Nota: con `uv run <cmd>` no necesitas activar el venv manualmente.
 
-### Variables de entorno
-
-#### Backend (`.env`)
-
-Ver `backend/.env.example` para todas las variables disponibles:
+### Lint & format con Ruff
 
 ```bash
-# Environment
+uv run ruff check .              # lint
+uv run ruff check --fix .        # auto-fix
+uv run ruff format .             # format
+uv run ruff format --check .     # check format (CI)
+```
+
+Configuración: `backend/ruff.toml` (line-length 120, target Py 3.11, reglas `E,W,F,I,B,C4,UP`).
+
+---
+
+## ⚛️ Frontend (React + Vite + Biome)
+
+Biome reemplaza ESLint + Prettier + eslint-plugin-import (organize-imports nativo). Un solo binario, configuración única (`frontend/biome.json`).
+
+### Setup manual
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Scripts disponibles
+
+| Script | Acción |
+|---|---|
+| `npm run dev` | Vite dev server (puerto 5173) |
+| `npm run build` | Build de producción |
+| `npm run preview` | Previsualiza build (puerto 4173) |
+| `npm run lint` | Biome lint |
+| `npm run lint:fix` | Biome lint con `--write` |
+| `npm run format` | Biome format con `--write` |
+| `npm run check` | Lint + format + import-sort |
+| `npm run check:fix` | Auto-fix de lo anterior |
+| `npm run test` / `test:ci` / `test:coverage` | Vitest |
+
+### Migración desde ESLint/Prettier
+
+Los archivos `.eslintrc.cjs`, `.prettierrc` y `.prettierignore` fueron eliminados. Toda la configuración vive en `frontend/biome.json`. Equivalencias:
+
+| ESLint/Prettier | Biome |
+|---|---|
+| `printWidth: 88` | `formatter.lineWidth: 88` |
+| `singleQuote: true` | `javascript.formatter.quoteStyle: "single"` |
+| `trailingComma: "all"` | `javascript.formatter.trailingCommas: "all"` |
+| `eslint-plugin-jsx-a11y` | `linter.rules.a11y` (built-in) |
+| `eslint-plugin-react-hooks` | `correctness.useExhaustiveDependencies` + `useHookAtTopLevel` |
+| `eslint-plugin-import` (order) | `assist.actions.source.organizeImports` |
+
+> ⚠️ `eslint-plugin-jsdoc` no tiene equivalente directo en Biome. Si necesitas validación de JSDoc, considera mantenerlo aparte o usar TypeScript.
+
+---
+
+## 🔧 Variables de entorno
+
+Copia los ejemplos:
+
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+### Backend (`backend/.env`)
+
+```env
 ENVIRONMENT=development
 DEBUG=true
 LOG_LEVEL=INFO
-
-# Application
 APP_NAME=FastAPI Boilerplate
-PROJECT_VERSION=0.1.0
 API_V1_PREFIX=/api/v1
-
-# CORS
 BACKEND_CORS_ORIGINS=http://localhost:5173
-
-# Database
 DATABASE_URL=sqlite+aiosqlite:///./sql_app.db
-
-# Security (cuando implementes auth)
-# SECRET_KEY=your-secret-key
-# ALGORITHM=HS256
-# ACCESS_TOKEN_EXPIRE_MINUTES=30
+SECRET_KEY=<genera-uno-fuerte>   # obligatorio en prod
+ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-#### Frontend (`.env`)
+### Frontend (`frontend/.env`)
 
-Ver `frontend/.env.example`:
-
-```bash
+```env
 VITE_API_BASE_PATH=/api
 VITE_API_VERSION=v1
 VITE_APP_NAME=React Vite Boilerplate
-VITE_DEBUG=true
 ```
+
+---
 
 ## 🧪 Testing
 
 ```bash
-# Backend: Ejecutar tests con coverage
-cd backend
-pytest --cov=app --cov-report=html
+# Backend
+cd backend && uv run pytest --cov=app --cov-report=term --cov-report=html
 
-# Frontend: Ejecutar tests en modo CI
-cd frontend
-npm run test:ci
-
-# Frontend: Ejecutar tests con coverage
-npm run test:coverage
-
-# Ambos (usando Makefile)
-make test
-make coverage
+# Frontend
+cd frontend && npm run test:coverage
 ```
 
-## 🎨 Linting & Formatting
+Umbral de cobertura backend: **70%** (ver `backend/pyproject.toml` → `[tool.coverage.report]`).
 
-```bash
-# Backend: Lint con Ruff
-cd backend
-ruff check .
-ruff format --check .
-
-# Backend: Arreglar issues automáticamente
-ruff check --fix .
-ruff format .
-
-# Frontend: ESLint + Prettier
-cd frontend
-npm run lint
-npm run format
-
-# Ambos (usando Makefile)
-make lint        # Solo verificar
-make lint-fix    # Arreglar automáticamente
-```
-
-## 🔄 Pre-commit hooks
-
-Instalar hooks para ejecutar linters/tests antes de commits:
-
-```bash
-# Instalar pre-commit
-pip install pre-commit
-
-# Instalar los hooks en el repo
-pre-commit install
-
-# Ejecutar hooks en todos los archivos (opcional)
-pre-commit run --all-files
-```
-
-Los hooks ejecutarán:
-- Ruff (Python linting + formatting)
-- ESLint (JavaScript linting)
-- Prettier (JavaScript formatting)
-- Trailing whitespace y EOF fixes
+---
 
 ## 🐳 Docker
 
-### Build y run con Docker Compose
-
 ```bash
-# Construir e iniciar servicios
-docker compose up --build
-
-# Solo iniciar (sin rebuild)
-docker compose up
-
-# Detener servicios
+docker compose up --build       # backend (8000) + frontend dev (5173)
 docker compose down
-
-# Ver logs
 docker compose logs -f backend
-docker compose logs -f frontend
 ```
 
-Backend estará en **http://localhost:8000**, frontend en **http://localhost:5173**.
-
-### Build manual
+Backend usa `python:3.11-slim` + UV multi-stage + usuario `app` (uid 1000) + healthcheck en `/api/v1/health/`.
+Frontend tiene 3 targets: `deps`, `dev` (default) y `prod` (sirve `dist/` con `vite preview`).
 
 ```bash
-# Backend
-cd backend
-docker build -t fastapi-backend:latest .
-docker run -p 8000:8000 fastapi-backend:latest
-
-# Frontend
-cd frontend
-docker build -t react-frontend:latest .
-docker run -p 5173:5173 react-frontend:latest
+# Build manual de imagen prod del frontend
+docker build -t react-frontend:prod --target prod ./frontend
 ```
+
+---
+
+## 🪝 Pre-commit hooks
+
+```bash
+make install-hooks      # equivalente a: pre-commit install
+make run-hooks          # corre todos los hooks en todos los archivos
+```
+
+Hooks configurados (`.pre-commit-config.yaml`):
+- **Ruff** + **ruff-format** (backend)
+- **uv-lock** (mantiene `uv.lock` en sync con `pyproject.toml`)
+- **Biome check** (frontend)
+- `trailing-whitespace`, `end-of-file-fixer`, `check-yaml`, `check-json`, `check-merge-conflict`, `check-added-large-files`, `detect-private-key`
+- **gitleaks** (escaneo de secretos)
+
+---
 
 ## 📊 CI/CD (GitHub Actions)
 
-El repositorio incluye workflow automático en `.github/workflows/ci.yml` que ejecuta:
+`.github/workflows/ci.yml` ejecuta jobs en paralelo:
 
-1. **Backend Lint** (Ruff) — Verifica calidad de código Python
-2. **Backend Tests** — Pytest con cobertura
-3. **Frontend Lint** (ESLint + Prettier) — Verifica calidad de código JS
-4. **Frontend Tests** — Vitest con cobertura
-5. **Build Docker** — Valida Dockerfiles
-6. **Security Scan** (Trivy) — Escanea vulnerabilidades
+1. **backend-lint** — Ruff check + format check (con `setup-uv` + caché)
+2. **backend-tests** — pytest + coverage → Codecov
+3. **frontend-lint** — `biome ci` (lint + format + organize-imports)
+4. **frontend-tests** — Vitest + coverage → Codecov
+5. **build-docker** — Buildx con caché GHA para backend y `--target prod` del frontend
+6. **security-scan** — Trivy con `severity HIGH,CRITICAL` y `exit-code: 1`
 
-Los reportes de cobertura se suben a **Codecov** automáticamente.
+---
 
-### Estadísticas de CI
+## 📁 Estructura
 
-- [![CI](https://github.com/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy/actions/workflows/ci.yml/badge.svg)](https://github.com/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy/actions)
-- [![codecov](https://codecov.io/gh/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy/graph/badge.svg)](https://codecov.io/gh/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy)
-
-## 🛠 Scripts útiles
-
-### Backend
-
-```bash
-# Crear nueva migración
-alembic revision --autogenerate -m "descripción de cambio"
-
-# Aplicar migraciones
-alembic upgrade head
-
-# Ver estado de migraciones
-alembic current
-
-# Revertir última migración
-alembic downgrade -1
+```text
+.
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── api/{routes.py, endpoints/{health,users,auth}.py}
+│   │   ├── core/{config,exceptions,logging,rate_limit,security}.py
+│   │   ├── db/{base,session}.py
+│   │   ├── models/user.py
+│   │   ├── schemas/{health,user}.py
+│   │   └── services/auth.py
+│   ├── tests/{conftest,test_health,test_users}.py
+│   ├── alembic/{env.py, versions/}
+│   ├── pyproject.toml          # deps + uv config + pytest + coverage
+│   ├── ruff.toml
+│   ├── uv.lock                 # generado por uv (commit)
+│   ├── Dockerfile              # uv multi-stage, non-root
+│   └── .dockerignore
+├── frontend/
+│   ├── src/{main.jsx, App.jsx, api/, components/, config/}
+│   ├── biome.json              # lint + format + organize-imports
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── vitest.config.js
+│   ├── tailwind.config.cjs
+│   ├── Dockerfile              # multi-stage (deps/dev/prod)
+│   └── .dockerignore
+├── scripts/{dev.ps1, test.ps1}
+├── .github/workflows/ci.yml
+├── .pre-commit-config.yaml
+├── docker-compose.yml
+├── Makefile
+└── README.md
 ```
 
-### Frontend
-
-```bash
-# Previsualizar build de producción
-npm run preview
-
-# Limpiar caché y dist
-npm run clean
-
-# Ejecutar tests en watch mode
-npm run test
-```
-
-## 📚 Documentación de APIs
-
-### Health Check
-
-```bash
-GET /health
-```
-
-Respuesta:
-
-```json
-{
-  "status": "ok",
-  "timestamp": "2025-10-25T12:00:00Z",
-  "database": {
-    "connected": true,
-    "engine": "SQLite (Async)"
-  }
-}
-```
-
-### Swagger/OpenAPI
-
-La documentación interactiva está disponible en:
-
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-- **OpenAPI JSON**: http://localhost:8000/openapi.json
+---
 
 ## 🔒 Seguridad
 
-- CORS configurado (localhost:5173 por defecto)
-- Rate limiting con slowapi
-- Manejo global de excepciones
-- Headers de seguridad estándar
-- Logging de eventos importantes
+- Rate limiting (slowapi) — recuerda aplicar `@limiter.limit(...)` en `/auth/login`.
+- CORS configurable vía `BACKEND_CORS_ORIGINS`.
+- Logging con rotación.
+- Trivy en CI escanea filesystem completo.
+- gitleaks en pre-commit detecta secretos antes del commit.
 
-## 🚀 Próximos pasos
+> Pendientes recomendados (ver auditoría): proteger endpoints de `/users` con `Depends(verify_token)`; eliminar default de `SECRET_KEY` en `app/core/config.py`; migrar `datetime.utcnow()` a `datetime.now(timezone.utc)` en `app/core/security.py`.
 
-- [ ] Agregar autenticación (JWT, OAuth2)
-- [ ] Integrar Sentry para error tracking
-- [ ] Configurar base de datos PostgreSQL para producción
-- [ ] Agregar librería de componentes UI (shadcn/ui, etc.)
-- [ ] Implementar paginación y filtros en endpoints
-- [ ] Agregar validación de input más robusta
-- [ ] Configurar deployment a Heroku/Vercel/AWS
-- [ ] Agregar E2E tests (Cypress/Playwright)
+---
 
-## 📝 Licencia
+## 📚 API Docs
 
-Este proyecto está bajo licencia MIT. Ver `LICENSE` para detalles.
+- **Swagger UI**: <http://localhost:8000/docs>
+- **ReDoc**: <http://localhost:8000/redoc>
+- **OpenAPI JSON**: <http://localhost:8000/openapi.json>
 
-## 👤 Autor
-
-- **GitHub**: [@Lvera87](https://github.com/Lvera87)
+---
 
 ## 🤝 Contribuir
 
-Las contribuciones son bienvenidas. Por favor:
+1. Fork → branch (`git checkout -b feature/foo`)
+2. Asegura que pasen `make lint` y `make test`
+3. Commit (los pre-commit hooks correrán automáticamente)
+4. Push y abre un PR
 
-1. Fork el repositorio
-2. Crea una rama (`git checkout -b feature/amazing-feature`)
-3. Commit cambios (`git commit -m 'Add some amazing feature'`)
-4. Push a la rama (`git push origin feature/amazing-feature`)
-5. Abre un Pull Request
+---
 
-## 📞 Soporte
+## 📝 Licencia
 
-Para problemas, sugerencias o preguntas, abre un [issue](https://github.com/Lvera87/Boilerplate-Fastapi-React-Vite-SQLalchemy/issues).
+MIT — ver `LICENSE`.
